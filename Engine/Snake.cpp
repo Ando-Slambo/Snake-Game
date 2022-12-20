@@ -52,7 +52,6 @@ void Snake::MoveHead(Keyboard& kbd)
 		y += 1;
 		//turn snake left if hit wall
 		if (y == Board::cells_y) {
-			y = Board::cells_y;
 			x -= 1;
 			direction = 0;
 		}
