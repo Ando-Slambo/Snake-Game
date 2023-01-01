@@ -90,6 +90,7 @@ void Game::ComposeFrame()
 	if (game_over || game_win) {
 		if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
 			snake.Initialize();
+			RespawnFood(rd);
 			game_over = false;
 			game_win = false;
 		}
