@@ -2,7 +2,7 @@
 
 void Snake::Initialize()
 {
-	if (initialized) { return;  }
+	if (initialized) { return; }
 
 	for (int i = 0; i < max_segments; i++) {
 		segs[i].x = x - (i + 1);
@@ -12,10 +12,9 @@ void Snake::Initialize()
 	initialized = true;
 }
 
-void Snake::MoveHead(Keyboard& kbd)
+bool Snake::MoveHead(Keyboard& kbd)
 {
-	//all directions are from perspective of user,
-	// from snake's perspective it always turns right
+	//all directions are from perspective of user
 	
 	//left (not allowed if moving right)
 	if (kbd.KeyIsPressed(0x25) && !(direction == 2)) { direction = 0; }
@@ -26,63 +25,50 @@ void Snake::MoveHead(Keyboard& kbd)
 	//down (not allowed if moving up)
 	if (kbd.KeyIsPressed(0x28) && !(direction == 1)) { direction = 3; }
 
-	MoveBody(x, y);
+	//ONLY EVER PASS MAX_SEGMENTS INTO MOVEBODY
+	MoveBody(max_segments);
 
-	if (direction == 0) {
-		//turn up if hit wall
-		if (x - 1 == 0) { direction = 1; }
+	//returns true when head hits wall
+	bool return_val = false;
+	switch (direction) {
+	case 0:
+		return_val = x - 1 == 0;
 		x -= 1;
-	}
-	if (direction == 1) {
-		//turn right if hit wall
-		if (y - 1 == 0) { direction = 2; }
+		break;
+	case 1:
+		return_val = y - 1 == 0;
 		y -= 1;
-	}
-	if (direction == 2) {
-		//turn down if hit wall
-		if (x + 1 == Board::cells_x) { direction = 3; }
+		break;
+	case 2:
+		return_val = x + 1 == Board::cells_x;
 		x += 1;
-	}
-	if (direction == 3) {
+		break;
+	case 3:
+		return_val = y + 1 == Board::cells_y;
 		y += 1;
-		//turn left if hit wall
-		if (y == Board::cells_y) {
-			x -= 1;
-			direction = 0;
-		}
 	}
+	return return_val;
 }
 
 void Snake::Draw(Board& brd, Graphics& gfx)
 {
 	//draws the head
-	brd.DrawCell(gfx, x, y);
+	brd.DrawCell(gfx, x, y, 255, 255, 255);
 
 	//draws the body
 	for (int i = 0; i < segments; i++) {
-		brd.DrawCell(gfx, segs[i].x, segs[i].y);
+		brd.DrawCell(gfx, segs[i].x, segs[i].y, segs[i].r, segs[i].g, segs[i].b);
 	}
 }
 
-void Snake::MoveBody(int head_x, int head_y)
+void Snake::MoveBody(int segment)
 {
-	//putting head co-ords into segment's array for the 0th segment to move to
-	// (head will move to new co-ords as soon as this function terminates)
-	xs[0] = head_x;
-	ys[0] = head_y;
+	if (segment < 0) { return; }
 
-	//max_segments-1 because no segment will be moving to the last segment's location
-	//i+1 because 0 is occupied by the head and segs[0] cannot be skipped
-	for (int i = 0; i < max_segments-1; i++) {
-		xs[i+1] = segs[i].x;
-		ys[i+1] = segs[i].y;
-	}
+	segs[segment].x = segs[segment - 1].x;
+	segs[segment].y = segs[segment - 1].y;
 
-	//set every segments co-ords to those in the arrays
-	for (int i = 0; i < max_segments; i++) {
-		segs[i].x = xs[i];
-		segs[i].y = ys[i];
-	}
+	MoveBody(segment - 1);
 }
 
 bool Snake::BodyCollision()
@@ -100,11 +86,15 @@ bool Snake::FoodCollision(int food_x, int food_y)
 	return (x == food_x && y == food_y);
 }
 
-bool Snake::Grow()
+bool Snake::Grow(int r, int g, int b)
 {
 	bool grew = (segments < max_segments);
 	//segments will grow by 1 if grew is true
 	segments += grew;
+
+	segs[segments-1].r = r;
+	segs[segments-1].g = g;
+	segs[segments-1].b = b;
 
 	//return true if we grew else return false to signify player has won
 	return grew;

@@ -26,16 +26,7 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
-	std::random_device rd;
-	std::uniform_int_distribution<int> x_cells(0, Board::cells_x);
-	std::uniform_int_distribution<int> y_cells(0, Board::cells_y);
-
-	for (int i = 0; i < Snake::max_segments; i++) {
-		food_xs[i] = x_cells(rd);
-		food_ys[i] = y_cells(rd);
-	}
-
-	SpawnFood();
+	RespawnFood(rd);
 	snake.Initialize();
 }
 
@@ -54,13 +45,13 @@ void Game::UpdateModel()
 	if (game_over || game_win) { return; }
 
 	if (frame_counter % 4 == 0) {
-		snake.MoveHead(wnd.kbd);
-		game_over = snake.BodyCollision();
+		game_over = snake.MoveHead(wnd.kbd) || snake.BodyCollision();
 
 		if (snake.FoodCollision(food_x, food_y)) {
-			food_eaten++;
 
-			if (snake.Grow()) { SpawnFood(); }
+			if (snake.Grow(food_r, food_g, food_b)) {
+				RespawnFood(rd);
+			}
 			else { game_win = true; }
 		}
 	}
@@ -68,15 +59,44 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
+	//draws red bars on top and bottom
+	for (int x = 0; x < Graphics::ScreenWidth; x++) {
+		//top bar
+		for (int y = 0; y < Board::dimensions; y++) {
+			gfx.PutPixel(x, y, 255, 0, 0);
+		}
+		//bottom bar
+		for (int y = Graphics::ScreenHeight - Board::dimensions; y < Graphics::ScreenHeight; y++) {
+			gfx.PutPixel(x, y, 255, 0, 0);
+		}
+	}
+	//draws red bars on left and right
+	for (int y = Board::dimensions; y < Graphics::ScreenHeight - Board::dimensions; y++) {
+		//left bar
+		for (int x = 0; x < Board::dimensions; x++) {
+			gfx.PutPixel(x, y, 255, 0, 0);
+		}
+		//right bar
+		for (int x = Graphics::ScreenWidth - Board::dimensions; x < Graphics::ScreenWidth; x++) {
+			gfx.PutPixel(x, y, 255, 0, 0);
+		}
+	}
+
+
 	snake.Draw(brd, gfx);
-
-	if (!game_win) { brd.DrawFood(gfx, food_x, food_y); }
-
+	if (!game_win) { brd.DrawCell(gfx, food_x, food_y, food_r, food_g, food_b); }
 	if (game_over) { sprite.DrawGameOver(100, 100, gfx); }
 }
 
-void Game::SpawnFood()
+void Game::RespawnFood(std::random_device& rd)
 {
-	food_x = food_xs[food_eaten];
-	food_y = food_ys[food_eaten];
+	std::uniform_int_distribution<int> x_cells(1, Board::cells_x - 1);
+	std::uniform_int_distribution<int> y_cells(1, Board::cells_y - 1);
+	std::uniform_int_distribution<int> rgb(10, 255);
+
+	food_x = x_cells(rd);
+	food_y = y_cells(rd);
+	food_r = rgb(rd);
+	food_g = rgb(rd);
+	food_b = rgb(rd);
 }

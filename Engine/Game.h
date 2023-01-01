@@ -38,21 +38,21 @@ public:
 private:
 	void ComposeFrame();
 	void UpdateModel();
-	void SpawnFood();
+	void RespawnFood(std::random_device& rd);
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	SpriteCodex sprite;
 	Board brd;
-	Snake snake; 
+	Snake snake;
+	std::random_device rd;
 
 	int food_x;
 	int food_y;
-	int food_eaten = 0;
+	int food_r = 255;
+	int food_g = 255;
+	int food_b = 255;
 	static constexpr int dimensions = Board::dimensions;
-	//arrays to hold RNG'd co-ords for food because idk how to respawn stuff
-	int food_xs[Snake::max_segments];
-	int food_ys[Snake::max_segments];
 
 	bool game_over = false;
 	bool game_win = false;
