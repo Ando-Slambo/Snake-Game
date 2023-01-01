@@ -86,6 +86,14 @@ void Game::ComposeFrame()
 	snake.Draw(brd, gfx);
 	if (!game_win) { brd.DrawCell(gfx, food_x, food_y, food_r, food_g, food_b); }
 	if (game_over) { sprite.DrawGameOver(100, 100, gfx); }
+
+	if (game_over || game_win) {
+		if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
+			snake.Initialize();
+			game_over = false;
+			game_win = false;
+		}
+	}
 }
 
 void Game::RespawnFood(std::random_device& rd)

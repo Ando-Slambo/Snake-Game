@@ -2,14 +2,15 @@
 
 void Snake::Initialize()
 {
-	if (initialized) { return; }
+	x = 1;
+	y = 1;
+	segments = 0;
+	direction = 2;
 
 	for (int i = 0; i < max_segments; i++) {
 		segs[i].x = x - (i + 1);
 		segs[i].y = y;
 	}
-
-	initialized = true;
 }
 
 bool Snake::MoveHead(Keyboard& kbd)

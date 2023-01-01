@@ -16,12 +16,10 @@ public:
 
 private:
 	void MoveBody(int segment);
-	int x = 1;
-	int y = 1;
-	int direction = 2;
-	bool initialized = false;
-
-	int segments = 0;
+	int x;
+	int y;
+	int direction;
+	int segments;
 
 	struct Segments
 	{
