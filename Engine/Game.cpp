@@ -45,7 +45,7 @@ void Game::UpdateModel()
 	if (game_over || game_win) { return; }
 
 	if (frame_counter % 4 == 0) {
-		game_over = snake.MoveHead(wnd.kbd) || snake.BodyCollision();
+		game_over = snake.Move(wnd.kbd) || snake.BodyCollision();
 
 		if (snake.FoodCollision(food_x, food_y)) {
 

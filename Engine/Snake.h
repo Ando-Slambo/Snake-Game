@@ -6,7 +6,7 @@ class Snake
 {
 public:
 	void Initialize();
-	bool MoveHead(Keyboard& kbd);
+	bool Move(Keyboard& kbd);
 	bool BodyCollision();
 	bool FoodCollision(int food_x, int food_y);
 	bool Grow(int r, int g, int b);

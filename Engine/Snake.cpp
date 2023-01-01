@@ -13,18 +13,16 @@ void Snake::Initialize()
 	}
 }
 
-bool Snake::MoveHead(Keyboard& kbd)
+bool Snake::Move(Keyboard& kbd)
 {
-	//all directions are from perspective of user
-	
 	//left (not allowed if moving right)
 	if (kbd.KeyIsPressed(0x25) && !(direction == 2)) { direction = 0; }
 	//up (not allowed if moving down)
-	if (kbd.KeyIsPressed(0x26) && !(direction == 3)) { direction = 1; }
+	else if (kbd.KeyIsPressed(0x26) && !(direction == 3)) { direction = 1; }
 	//right (not allowed if moving left)
-	if (kbd.KeyIsPressed(0x27) && !(direction == 0)) { direction = 2; }
+	else if (kbd.KeyIsPressed(0x27) && !(direction == 0)) { direction = 2; }
 	//down (not allowed if moving up)
-	if (kbd.KeyIsPressed(0x28) && !(direction == 1)) { direction = 3; }
+	else if (kbd.KeyIsPressed(0x28) && !(direction == 1)) { direction = 3; }
 
 	//ONLY EVER PASS MAX_SEGMENTS - 1 INTO MOVEBODY
 	MoveBody(max_segments - 1);
