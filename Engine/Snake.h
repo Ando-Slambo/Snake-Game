@@ -12,7 +12,7 @@ public:
 	bool Grow(int r, int g, int b);
 	void Draw(Board& brd, Graphics& gfx);
 
-	static constexpr int max_segments = 200;
+	static constexpr int max_segments = 63;
 
 private:
 	void MoveBody(int segment);
@@ -21,11 +21,7 @@ private:
 	int direction = 2;
 	bool initialized = false;
 
-	//no following data include the head
 	int segments = 0;
-	//arrays that will hold the co-ords of each segment
-	int xs[max_segments];
-	int ys[max_segments];
 
 	struct Segments
 	{

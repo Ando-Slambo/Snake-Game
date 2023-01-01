@@ -25,8 +25,8 @@ bool Snake::MoveHead(Keyboard& kbd)
 	//down (not allowed if moving up)
 	if (kbd.KeyIsPressed(0x28) && !(direction == 1)) { direction = 3; }
 
-	//ONLY EVER PASS MAX_SEGMENTS INTO MOVEBODY
-	MoveBody(max_segments);
+	//ONLY EVER PASS MAX_SEGMENTS - 1 INTO MOVEBODY
+	MoveBody(max_segments - 1);
 
 	//returns true when head hits wall
 	bool return_val = false;
@@ -63,7 +63,11 @@ void Snake::Draw(Board& brd, Graphics& gfx)
 
 void Snake::MoveBody(int segment)
 {
-	if (segment < 0) { return; }
+	if (segment == 0) {
+		segs[segment].x = x;
+		segs[segment].y = y;
+		return;
+	}
 
 	segs[segment].x = segs[segment - 1].x;
 	segs[segment].y = segs[segment - 1].y;
@@ -73,9 +77,9 @@ void Snake::MoveBody(int segment)
 
 bool Snake::BodyCollision()
 {
+	//check if head's co-ords are in the segment arrays and return true if so
+	// (only want to return false after checking every element)
 	for (int i = 0; i < segments; i++) {
-		//check if head's co-ords are in the segment arrays and return true if so
-		// (only want to return false after checking every element)
 		if (x == segs[i].x && y == segs[i].y) { return true; }
 	}
 	return false;
